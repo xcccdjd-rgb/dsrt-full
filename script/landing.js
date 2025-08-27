@@ -1,41 +1,32 @@
-// Load header/footer/modal
-document.getElementById('header').innerHTML = fetch('shared/header.html').then(r=>r.text()).then(t=>document.getElementById('header').innerHTML=t);
-document.getElementById('footer').innerHTML = fetch('shared/footer.html').then(r=>r.text()).then(t=>document.getElementById('footer').innerHTML=t);
-document.getElementById('modal-container').innerHTML = fetch('shared/modal.html').then(r=>r.text()).then(t=>document.getElementById('modal-container').innerHTML=t);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("bgCanvas"), alpha:true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+camera.position.z = 5;
 
-// Modal logic
-document.addEventListener('DOMContentLoaded', ()=>{
-  const loginBtn=document.getElementById('loginBtn');
-  const loginModal=document.getElementById('loginModal');
-  const resetModal=document.getElementById('resetModal');
-  const closeModal=document.getElementById('closeModal');
-  const closeReset=document.getElementById('closeReset');
-  const forgotBtn=document.getElementById('forgotBtn');
-  const registerBtn=document.getElementById('registerBtn');
-  const loginSubmit=document.getElementById('loginSubmit');
+const particlesCount = 5000;
+const positions = new Float32Array(particlesCount*3);
+for(let i=0;i<particlesCount*3;i++){positions[i]=(Math.random()-0.5)*10;}
+const particlesGeometry = new THREE.BufferGeometry();
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions,3));
+const particlesMaterial = new THREE.PointsMaterial({ color:0x00ffff,size:0.05,transparent:true,opacity:0.8});
+const particlesMesh = new THREE.Points(particlesGeometry,particlesMaterial);
+scene.add(particlesMesh);
 
-  loginBtn.addEventListener('click',()=>loginModal.classList.add('show'));
-  closeModal.addEventListener('click',()=>loginModal.classList.remove('show'));
-  window.addEventListener('click',e=>{if(e.target===loginModal) loginModal.classList.remove('show')});
+let mouseX=0, mouseY=0;
+document.addEventListener('mousemove', e=>{mouseX=(e.clientX/window.innerWidth-0.5)*2;mouseY=-(e.clientY/window.innerHeight-0.5)*2;});
+document.addEventListener('touchmove', e=>{if(e.touches.length>0){const t=e.touches[0];mouseX=(t.clientX/window.innerWidth-0.5)*2;mouseY=-(t.clientY/window.innerHeight-0.5)*2;}},{passive:true});
 
-  forgotBtn.addEventListener('click',()=>{
-    loginModal.classList.remove('show');
-    resetModal.classList.add('show');
-  });
-  closeReset.addEventListener('click',()=>resetModal.classList.remove('show'));
-  window.addEventListener('click',e=>{if(e.target===resetModal) resetModal.classList.remove('show')});
+function animate(){
+  requestAnimationFrame(animate);
+  particlesMesh.rotation.y+=0.001+mouseX*0.001;
+  particlesMesh.rotation.x+=0.0005+mouseY*0.001;
+  renderer.render(scene,camera);
+}
+animate();
 
-  registerBtn.addEventListener('click',()=>alert('Fitur Register belum diimplementasikan'));
-
-  loginSubmit.addEventListener('click',()=>{
-    const u=document.getElementById('usernameInput').value;
-    const p=document.getElementById('passwordInput').value;
-    if(u==='fengbayu@gmail.com' && p==='kakanda'){
-      alert('Login berhasil!');
-      sessionStorage.setItem('loggedIn', 'true');
-      window.location.href='pages/dashboard.html';
-    } else {
-      alert('Username atau password salah');
-    }
-  });
+window.addEventListener('resize', ()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
 });
