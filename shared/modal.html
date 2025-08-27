@@ -1,43 +1,63 @@
-document.addEventListener('DOMContentLoaded', function(){
+// Modal Logic
+const loginModal=document.getElementById('loginModal');
+const registerModal=document.getElementById('registerModal');
+const resetModal=document.getElementById('resetModal');
 
-  const loginModal = document.getElementById('loginModal');
-  const resetModal = document.getElementById('resetModal');
-  const loginBtn = document.getElementById('loginBtn');
-  const closeModal = document.getElementById('closeModal');
-  const forgotBtn = document.getElementById('forgotBtn');
-  const closeReset = document.getElementById('closeReset');
-  const registerBtn = document.getElementById('registerBtn');
-  const loginSubmit = document.getElementById('loginSubmit');
+const loginBtn=document.getElementById('loginBtn');
+const closeModal=document.getElementById('closeModal');
+const forgotBtn=document.getElementById('forgotBtn');
+const registerBtn=document.getElementById('registerBtn');
+const closeRegister=document.getElementById('closeRegister');
+const closeReset=document.getElementById('closeReset');
 
-  loginBtn.addEventListener('click', () => {
-    loginModal.classList.add('show');
-  });
+const loginSubmit=document.getElementById('loginSubmit');
+const registerSubmit=document.getElementById('registerSubmit');
+const resetSubmit=document.getElementById('resetSubmit');
 
-  closeModal.addEventListener('click', () => loginModal.classList.remove('show'));
-  closeReset.addEventListener('click', () => resetModal.classList.remove('show'));
+// Open login modal
+loginBtn.addEventListener('click',()=>loginModal.classList.add('show'));
+closeModal.addEventListener('click',()=>loginModal.classList.remove('show'));
 
-  window.addEventListener('click', e => {
-    if(e.target === loginModal) loginModal.classList.remove('show');
-    if(e.target === resetModal) resetModal.classList.remove('show');
-  });
+// Forgot Password → open reset modal
+forgotBtn.addEventListener('click',()=>{
+  loginModal.classList.remove('show');
+  resetModal.classList.add('show');
+});
+closeReset.addEventListener('click',()=>resetModal.classList.remove('show'));
 
-  forgotBtn.addEventListener('click', () => {
+// Register modal
+registerBtn.addEventListener('click',()=>{
+  loginModal.classList.remove('show');
+  registerModal.classList.add('show');
+});
+closeRegister.addEventListener('click',()=>registerModal.classList.remove('show'));
+
+// Demo login
+loginSubmit.addEventListener('click',()=>{
+  const u=document.getElementById('usernameInput').value;
+  const p=document.getElementById('passwordInput').value;
+  if(u==='fengbayu@gmail.com' && p==='kakanda'){
+    alert('Login berhasil!');
     loginModal.classList.remove('show');
-    resetModal.classList.add('show');
-  });
+  } else alert('Username atau password salah');
+});
 
-  registerBtn.addEventListener('click', () => alert('Fitur Register belum diimplementasikan'));
+// Demo register
+registerSubmit.addEventListener('click',()=>{
+  const u=document.getElementById('regUsername').value;
+  const e=document.getElementById('regEmail').value;
+  const p=document.getElementById('regPassword').value;
+  if(u && e && p){
+    alert(`Akun ${u} berhasil didaftarkan (demo)`);
+    registerModal.classList.remove('show');
+  } else alert('Isi semua form register!');
+});
 
-  loginSubmit.addEventListener('click', () => {
-    const u = document.getElementById('usernameInput').value;
-    const p = document.getElementById('passwordInput').value;
-    if(u === 'fengbayu@gmail.com' && p === 'kakanda'){
-      alert('Login berhasil!');
-      sessionStorage.setItem('loggedIn','true');
-      window.location.href = 'dashboard.html';
-    } else {
-      alert('Username atau password salah');
-    }
-  });
-
+// Demo reset password
+resetSubmit.addEventListener('click',()=>{
+  const email=document.getElementById('resetEmail').value;
+  if(email){
+    alert(`Link reset password dikirim ke ${email}`);
+    resetModal.classList.remove('show');
+  } else alert('Masukkan email yang valid!');
 });
